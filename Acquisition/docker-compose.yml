@@ -1,0 +1,21 @@
+name: acquisition
+
+services:
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    restart: unless-stopped
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Los_Angeles
+      - NZBGET_USER=
+      - NZBGET_PASS=
+    ports:
+      - "6789:6789"
+    volumes:
+      - nzbget_config:/config
+      - "/Volumes/Incidental Epoch/Downloads:/downloads"
+
+volumes:
+  nzbget_config:

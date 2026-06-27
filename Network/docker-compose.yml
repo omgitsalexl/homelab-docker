@@ -1,0 +1,32 @@
+name: network
+
+services:
+  adguard:
+    image: adguard/adguardhome:latest
+    container_name: adguard
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:80/tcp"
+    volumes:
+      - adguard_work:/opt/adguardhome/work
+      - adguard_conf:/opt/adguardhome/conf
+  
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - "80:80/tcp"
+      - "81:81/tcp"
+      - "443:443/tcp"
+    volumes:
+      - nginx-proxy-manager_data:/data
+      - nginx-proxy-manager_letsencrypt:/etc/letsencrypt
+
+volumes:
+  adguard_work:
+  adguard_conf:
+  nginx-proxy-manager_data:
+  nginx-proxy-manager_letsencrypt:

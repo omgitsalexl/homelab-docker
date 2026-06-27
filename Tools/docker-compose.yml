@@ -1,0 +1,103 @@
+name: tools
+
+services:
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io:latest
+    container_name: changedetection
+    restart: unless-stopped
+    environment:
+      - TZ=America/Los_Angeles
+      - HIDE_REFERER=true
+      - PLAYWRIGHT_DRIVER_URL=ws://changedetection-browser-sockpuppet:3000
+    ports:
+      - "5050:5000/tcp"
+    volumes:
+      - changedetection_data:/app/data
+    depends_on:
+      changedetection-browser-sockpuppet:
+        condition: service_started
+
+  changedetection-browser-sockpuppet:
+    image: dgtlmoon/sockpuppetbrowser:latest
+    container_name: changedetection-browser-sockpuppet
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - TZ=America/Los_Angeles
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1024
+      - SCREEN_DEPTH=16
+      - MAX_CONCURRENT_CHROME_PROCESSES=10
+      
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    restart: unless-stopped
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Los_Angeles
+    ports:
+      - "8181:8181"
+    volumes:
+      - tautulli_config:/config
+
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    restart: unless-stopped
+    init: true
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Los_Angeles
+    ports:
+      - "5055:5055"
+    volumes:
+      - seerr_data:/app/config/
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
+
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    restart: unless-stopped
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Los_Angeles
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+    ports:
+      - "8265:8265"
+      - "8266:8266"
+    volumes:
+      - tdarr_config:/app/configs/
+      - tdarr_server:/app/server/
+      - "/Volumes/Incidental Epoch/Streaming:/movies"
+  
+  homarr:
+    image: ghcr.io/homarr-labs/homarr:latest
+    container_name: homarr
+    restart: unless-stopped
+    environment:
+      - TZ=America/Los_Angeles
+      - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY}
+    ports:
+      - "7575:7575"
+    volumes:
+      - homarr_data:/appdata/
+
+volumes:
+  changedetection_data:
+  tautulli_config:
+  seerr_data:
+  tdarr_config:
+  tdarr_server:
+  homarr_data:
