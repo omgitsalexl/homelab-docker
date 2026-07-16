@@ -15,7 +15,8 @@ services:
       - "6789:6789"
     volumes:
       - nzbget_config:/config
-      - "/Volumes/Incidental Epoch/Downloads:/downloads"
+      - "/Volumes/Thermal Silencer/Downloads:/downloads"
+      - "/Volumes/Thermal Silencer:/intermediate"
 
 volumes:
   nzbget_config:
