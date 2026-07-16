@@ -101,4 +101,5 @@ volumes:
   seerr_data:
   tdarr_config:
   tdarr_server:
+  tdarr_cache:
   homarr_data:
