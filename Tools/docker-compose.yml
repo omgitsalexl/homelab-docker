@@ -12,7 +12,7 @@ services:
     ports:
       - "5050:5000/tcp"
     volumes:
-      - changedetection_data:/app/data
+      - changedetection_data:/datastore
     depends_on:
       changedetection-browser-sockpuppet:
         condition: service_started
