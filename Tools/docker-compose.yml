@@ -80,6 +80,7 @@ services:
     volumes:
       - tdarr_config:/app/configs/
       - tdarr_server:/app/server/
+      - tdarr_cache:/cache/
       - "/Volumes/Incidental Epoch/Streaming:/movies"
   
   homarr:
